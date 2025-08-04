@@ -1,26 +1,27 @@
 # ساختار دیتابیس
 
 ## User
-- full_name: نام کامل
-- email: ایمیل (یکتا، اختیاری)
-- phone_number: شماره موبایل (یکتا، اختیاری)
-- is_active: فعال بودن حساب
-- is_staff: دسترسی ادمین
-- date_joined: تاریخ عضویت
-- last_login: آخرین ورود
+مدل کاربری اصلی سیستم که از `AbstractBaseUser` و `PermissionsMixin` ارث‌بری می‌کند.
+
+### فیلدها:
+- `full_name` (CharField): نام کامل کاربر (اختیاری)
+- `email` (EmailField): ایمیل کاربر (یکتا، اختیاری)
+- `phone_number` (CharField): شماره موبایل (یکتا، اختیاری)
+- `is_active` (Boolean): وضعیت فعال بودن حساب کاربری (پیش‌فرض: True)
+- `is_staff` (Boolean): دسترسی به پنل مدیریت (پیش‌فرض: False)
+- `date_joined` (DateTime): تاریخ و زمان عضویت (به صورت خودکار تنظیم می‌شود)
+- `last_login` (DateTime): آخرین زمان ورود کاربر (به‌روزرسانی خودکار)
+- `password` (CharField): رمز عبور هش‌شده (به صورت خودکار مدیریت می‌شود)
+
+### محدودیت‌ها:
+- ایمیل باید یکتا باشد (در صورت ارائه)
+- شماره موبایل باید یکتا باشد (در صورت ارائه)
+- حداقل یکی از فیلدهای ایمیل یا شماره موبایل باید پر شود
 
 ## AdminProfile
-- user: ارتباط یک‌به‌یک با User
-- social_networks: شبکه‌های اجتماعی (JSON)
-- description: توضیحات
+پروفایل مدیریتی برای کاربران دارای دسترسی ادمین
 
-## OTP
-- email: ایمیل (اختیاری)
-- phone_number: شماره موبایل (اختیاری)
-- code: کد OTP
-- purpose: هدف (login, register, reset)
-- created_at: زمان ایجاد
-
-### نکته
-- OTPها پس از ۲ دقیقه منقضی و حذف می‌شوند.
-- ایندکس ترکیبی روی (email, phone_number, code) برای جستجوی سریع‌تر.
+### فیلدها:
+- `user` (OneToOneField): ارتباط یک‌به‌یک با مدل User
+- `social_networks` (JSONField): شبکه‌های اجتماعی به صورت دیکشنری JSON (پیش‌فرض: {})
+- `description` (TextField): توضیحات پروفایل (اختیاری)

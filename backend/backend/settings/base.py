@@ -2,6 +2,7 @@ from dotenv import load_dotenv
 from pathlib import Path
 import os
 from .logging_config import LOGGING_CONFIG as CUSTOM_LOGGING  
+from datetime import timedelta
 
 # Define the base directory of the project
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
@@ -33,6 +34,8 @@ INSTALLED_APPS = [
     'corsheaders',            # Handles Cross-Origin Resource Sharing (CORS)
     'django_celery_beat',     # Periodic task scheduler for Celery
     'drf_spectacular',        # Auto-generates OpenAPI schema and Swagger docs
+    'rest_framework_simplejwt', # JWT authentication for REST framework
+    'rest_framework_simplejwt.token_blacklist', # Token blacklist for JWT authentication
 ]
 
 # Middleware configuration
@@ -105,9 +108,21 @@ AUTH_USER_MODEL = 'accounts.User'
 
 # Authentication backends configuration
 AUTHENTICATION_BACKENDS = [
-    'accounts.backends.EmailOrPhoneBackend',  # custom backend
     'django.contrib.auth.backends.ModelBackend',  # default fallback
 ]
+
+# Redis cache configuration
+CACHES = {
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": os.getenv('REDIS_LOCATION'),  # name service redis in docker-compose
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        }
+    }
+}
+
+#********************************************************************************#
 
 # For Kavenegar SMS service
 KAVENEGAR_API_KEY = os.getenv('KAVENEGAR_API_KEY')
@@ -121,31 +136,11 @@ EMAIL_USE_TLS = os.getenv('EMAIL_USE_TLS', 'True') == 'True'
 EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER', 'amirhoosenbabai82@gmail.com')
 EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD', None)
 
-# Django REST Framework settings
-REST_FRAMEWORK = {
-    # Throttling
-    'DEFAULT_THROTTLE_CLASSES': [
-        'rest_framework.throttling.UserRateThrottle',
-        'rest_framework.throttling.AnonRateThrottle',
-    ],
-    'DEFAULT_THROTTLE_RATES': {
-        'user': os.getenv('THROTTLE_RATE_USER', '200/hour'),
-        'anon': os.getenv('THROTTLE_RATE_ANON', '200/hour'),
-        'custom_action': os.getenv('THROTTLE_RATE_CUSTOM', '15/minute'),
-    },
-
-    # Exception handling
-    'EXCEPTION_HANDLER': 'core.exceptions.exception_handlers.custom_exception_handler',
-
-    # Schema / documentation
-    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
-}
-
 # Celery configuration
 # Broker URL for Celery (default: RabbitMQ)
 CELERY_BROKER_URL = os.getenv('CELERY_BROKER_URL', 'amqp://user:pass@rabbitmq:5672//')
 # Backend for storing task results (set to None to disable result storage)
-CELERY_RESULT_BACKEND = 'rpc://'  # You can change to 'redis://' or a database backend if needed
+CELERY_RESULT_BACKEND = os.getenv('CELERY_RESULT_BACKEND')
 # Accepted content types for tasks
 CELERY_ACCEPT_CONTENT = ['json']
 # Serialization format for tasks and results
@@ -166,3 +161,58 @@ LOGGING = CUSTOM_LOGGING
 # Turnstile Captcha configuration
 TURNSTILE_ENABLED = os.getenv("TURNSTILE_ENABLED", "false").lower() == "true"
 TURNSTILE_SECRET_KEY = os.getenv("TURNSTILE_SECRET_KEY")
+
+#********************************************************************************#
+
+# Django REST Framework settings
+REST_FRAMEWORK = {
+    # Versioning configuration
+    'DEFAULT_VERSIONING_CLASS': 'rest_framework.versioning.URLPathVersioning',
+    'DEFAULT_VERSION': 'v1',
+    'ALLOWED_VERSIONS': ('v1',),
+    'VERSION_PARAM': 'version',
+    
+    # Throttling
+    'DEFAULT_THROTTLE_CLASSES': [
+        'rest_framework.throttling.UserRateThrottle',
+        'rest_framework.throttling.AnonRateThrottle',
+    ],
+    'DEFAULT_THROTTLE_RATES': {
+        'user': os.getenv('THROTTLE_RATE_USER', '200/hour'),
+        'anon': os.getenv('THROTTLE_RATE_ANON', '200/hour'),
+        'custom_action': os.getenv('THROTTLE_RATE_CUSTOM', '15/minute'),
+        'resend_otp_or_link': '3/minute',
+        'token_refresh_anon': '5/minute',
+    },
+
+    # Exception handling
+    'EXCEPTION_HANDLER': 'core.exceptions.exception_handlers.custom_exception_handler',
+
+    # Schema / documentation
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+
+    # JWT authentication
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ),
+}
+
+# Simple JWT settings
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=15), # access token lifetime
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=7), # refresh token lifetime
+    'ROTATE_REFRESH_TOKENS': True, # rotate refresh token
+    'BLACKLIST_AFTER_ROTATION': True, # blacklist refresh token after rotation
+    'AUTH_HEADER_TYPES': ('Bearer',), # auth header types
+    'AUTH_TOKEN_CLASSES': ('rest_framework_simplejwt.tokens.AccessToken',), # auth token classes
+}
+
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'API مستندات',
+    'DESCRIPTION': 'مستندات کامل پروژه',
+    'VERSION': '1.0.0',
+    'SERVE_INCLUDE_SCHEMA': True,
+    'COMPONENT_SPLIT_REQUEST': True,
+    'ENABLE_EXAMPLES': True, # active examples 
+    'EXAMPLES_ENABLED': True, # active examples 
+}

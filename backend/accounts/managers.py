@@ -1,7 +1,7 @@
+import logging
 from django.contrib.auth.models import BaseUserManager
-from django.utils import timezone
-from django.db import models
-import secrets
+
+logger = logging.getLogger(__name__)
 
 # ---------------------
 # Custom User Manager
@@ -32,6 +32,7 @@ class UserManager(BaseUserManager):
             user.set_unusable_password()
 
         user.save(using=self._db)
+        logger.info(f"User created. Email: {email}, Phone: {phone_number}, Has password: {bool(password)}")
         return user
 
     def create_superuser(self, email=None, phone_number=None, password=None, **extra_fields):
@@ -48,39 +49,3 @@ class UserManager(BaseUserManager):
             password=password,
             **extra_fields
         )
-
-# ---------------------
-# Custom OTP Manager
-# --------------------- 
-class OTPManager(models.Manager):
-    """
-    Manager to generate a new OTP for a user by removing any existing OTPs.
-    Ensures only one active OTP per user regardless of purpose.
-    """
-
-    def generate_otp(self, email=None, phone_number=None, purpose=None):
-        """
-        Deletes any existing OTPs for the given user and creates a new one.
-
-        Args:
-            email (str, optional): User's email address.
-            phone_number (str, optional): User's phone number.
-            purpose (str): The OTP usage context (e.g., login, reset).
-
-        Returns:
-            tuple: (new OTP instance, True)
-        """
-        filters = {
-            "email": email,
-            "phone_number": phone_number,
-        }
-
-        # Delete all existing OTPs for the user
-        self.filter(**filters).delete()
-
-        # Create and return a new OTP
-        return self.create(
-            code=str(secrets.randbelow(1000000)).zfill(6),
-            purpose=purpose,
-            **filters
-        ), True
