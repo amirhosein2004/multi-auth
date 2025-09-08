@@ -1,1 +1,40 @@
-Repository for implementing various authentication methods in projects.
+# 🔐 مجموعه ماژول‌های احراز هویت
+
+<div align="center">
+
+**🚀 مخزن جامع ماژول‌های احراز هویت برای پروژه‌های مختلف**
+
+*در این ریپازیتوری ماژول‌های احراز هویت پروژه‌های مختلف را نگهداری می‌کنیم*
+
+[![Authentication](https://img.shields.io/badge/Authentication-Modules-blue?style=for-the-badge)](.)
+[![Django](https://img.shields.io/badge/Django-092E20?style=for-the-badge&logo=django&logoColor=white)](https://djangoproject.com/)
+[![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://python.org/)
+
+</div>
+
+---
+
+## 📋 **فهرست پروژه‌ها**
+
+این ریپازیتوری شامل ماژول‌های احراز هویت متنوع برای پروژه‌های مختلف است. هر پروژه دارای سیستم احراز هویت منحصر به فرد و مستندات کاملی می‌باشد.
+
+### 🏗️ **پروژه‌های موجود**
+
+<div align="center">
+
+| 📁 **پروژه** | 📝 **توضیحات** | 🔗 **مستندات** | 🛠️ **تکنولوژی** |
+|:----------:|:-------------:|:-------------:|:---------------:|
+| **P1** | سیستم احراز هویت پیشرفته با پشتیبانی کامل از OTP و رمز عبور | [📖 مشاهده مستندات](./P1/README.md) | Django + DRF + Redis + Celery |
+| **P2** | سیستم احراز هویت موبایل‌محور با API های RESTful | [📖 مشاهده مستندات](./P2/README.md) | Django + DRF + PostgreSQL |
+
+</div>
+
+## 🚀 **شروع سریع**
+
+برای استفاده از هر یک از ماژول‌های احراز هویت:
+
+1. **انتخاب پروژه**: از جدول بالا پروژه مورد نظر را انتخاب کنید
+2. **مطالعه مستندات**: روی لینک مستندات کلیک کنید
+3. **پیروی از راهنما**: دستورالعمل‌های نصب و راه‌اندازی را دنبال کنید
+
+---
