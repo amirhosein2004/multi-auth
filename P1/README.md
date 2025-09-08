@@ -66,6 +66,32 @@
 
 
 
+
+## 📸 **نمونه‌های عملی سیستم**
+
+### 🖼️ **تصاویر فرآیند کامل احراز هویت**
+
+<div align="center">
+
+<div align="center" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; align-items: center;">
+
+![picture1](./docs/assets/Screenshot%202025-09-08%20112813.png)
+![picture2](./docs/assets/Screenshot%202025-09-08%20112824.png)
+
+![picture3](./docs/assets/Screenshot%202025-09-08%20112835.png)
+![picture4](./docs/assets/Screenshot%202025-09-08%20112845.png)
+
+![picture5](./docs/assets/Screenshot%202025-09-08%20112857.png)
+![picture6](./docs/assets/Screenshot%202025-09-08%20112951.png)
+
+</div>
+
+</div>
+
+---
+
+=======
+
 ## 📚 **مستندات تکمیلی**
 
 برای مستندات کامل پروژه به پوشه [docs](docs/README.md) مراجعه کنید.
