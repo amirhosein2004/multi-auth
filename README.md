@@ -1,0 +1,1 @@
+Repository for implementing various authentication methods in projects.
