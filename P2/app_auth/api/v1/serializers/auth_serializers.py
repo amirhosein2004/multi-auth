@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .mixins import PhoneValidationMixin
+from .mixins import PhoneValidationMixin, NationalIdValidationMixin
 from ....services.auth_services import get_user
 from ....services.validation_services import verify_otp
 from django.contrib.auth import get_user_model
@@ -10,7 +10,7 @@ from django.db import transaction
 User = get_user_model()
 
 
-class SendOTPLoginSerializer(serializers.Serializer):
+class SendOTPLoginSerializer(NationalIdValidationMixin, serializers.Serializer):
     """
     serializer for send otp login
     """
@@ -26,11 +26,6 @@ class SendOTPLoginSerializer(serializers.Serializer):
             "min_length": ".کد ملی باید ۱۰ رقم باشد",
         },
     )
-
-    def validate_national_id(self, value):
-        if not value.isdigit():
-            raise serializers.ValidationError('.کد ملی باید عدد باشد')
-        return value
 
     def validate(self, attrs):
         """
@@ -119,7 +114,7 @@ class PasswordLoginSerializer(SendOTPLoginSerializer):
         return attrs
 
 
-class SendOTPRegisterView(PhoneValidationMixin, serializers.Serializer):
+class SendOTPRegisterView(PhoneValidationMixin, NationalIdValidationMixin, serializers.Serializer):
     """
     serializer for send otp register
     """
@@ -144,11 +139,6 @@ class SendOTPRegisterView(PhoneValidationMixin, serializers.Serializer):
             "blank": ".شماره تلفن اجباری است",
         },
     )
-
-    def validate_national_id(self, value):
-        if not value.isdigit():
-            raise serializers.ValidationError('.کد ملی باید عدد باشد')
-        return value
 
     def validadte(self, attrs):
         """

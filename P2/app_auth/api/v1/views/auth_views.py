@@ -14,6 +14,7 @@ from ..serializers.auth_serializers import (
     PasswordLoginSerializer,
 )
 from ....services.cache_services import can_resend, set_resend_cooldown, set_is_verify_phone, get_is_verify_phone
+from rest_framework_simplejwt.views import TokenRefreshView
 
 
 logger = logging.getLogger(__name__)
@@ -25,7 +26,6 @@ class SendOTPLoginAPIView(APIView):
     """
     authentication_classes = []
     permission_classes = []
-    required_role = []
 
     def post(self, request, *args, **kwargs):
         serializer = SendOTPLoginSerializer(data=request.data)
@@ -50,15 +50,12 @@ class SendOTPLoginAPIView(APIView):
             return Response({'detail': '.خطای غیر منتظره ای رخ داد دوباره تلاش کنید'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
-
-
 class VerifyOTPLoginAPIView(APIView):
     """
     Verify OTP and login user
     """
     authentication_classes = []
     permission_classes = []
-    required_role = []
 
     def post(self, request, *args, **kwargs):
         serializer = VerifyOTPLoginSerializer(data=request.data)
@@ -82,7 +79,6 @@ class PasswordLoginAPIView(APIView):
     """
     authentication_classes = []
     permission_classes = []
-    required_role = []
 
     def post(self, request, *args, **kwargs):
         serializer = PasswordLoginSerializer(data=request.data)
@@ -108,7 +104,6 @@ class SendOTPRegisterAPIView(APIView):
     """
     authentication_classes = []
     permission_classes = []
-    required_role = []
 
     def post(self, request, *args, **kwargs):
         serializer = SendOTPRegisterView(data=request.data)
@@ -140,7 +135,6 @@ class VerifyOTPRegisterAPIView(APIView):
     """
     authentication_classes = []
     permission_classes = []
-    required_role = []
 
     def post(self, request, *args, **kwargs):
         serializer = VerifyOTPRegisterView(data=request.data)
@@ -162,7 +156,6 @@ class SetPasswordRegisterAPIView(APIView):
     """
     authentication_classes = []
     permission_classes = []
-    required_role = []
 
     def post(self, request, *args, **kwargs):
         serializer = SetPasswordRegisterView(data=request.data)
@@ -189,9 +182,7 @@ class SetPasswordRegisterAPIView(APIView):
 
 class LogoutAPIView(APIView):
     """logout"""
-    authentication_classes = []
     permission_classes = []
-    required_role = []
 
     def post(self, request, *args, **kwargs):
         refresh_token = request.data.get('refresh', None)
@@ -204,3 +195,10 @@ class LogoutAPIView(APIView):
         except Exception:
             logger.error(f"Error during logout for user {request.user.id}", exc_info=True)
             return Response({'detail': '.خطای غیر منتظره ای رخ داد دوباره تلاش کنید'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+
+class CustomTokenRefreshView(TokenRefreshView):
+    """
+    Custom Token Refresh View to refresh access token
+    """

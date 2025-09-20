@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from .mixins import NationalIdValidationMixin
 from ....services.auth_services import get_user
 from ....services.validation_services import verify_otp
 from django.contrib.auth import get_user_model
@@ -9,7 +10,7 @@ from django.db import transaction
 User = get_user_model()
 
 
-class SendOTPResetPasswordSerializer(serializers.Serializer):
+class SendOTPResetPasswordSerializer(NationalIdValidationMixin, serializers.Serializer):
     """
     Send OTP for reset password
     """
@@ -25,11 +26,6 @@ class SendOTPResetPasswordSerializer(serializers.Serializer):
             "min_length": ".کد ملی باید ۱۰ رقم باشد",
         },
     )
-
-    def validate_national_id(self, value):
-        if not value.isdigit():
-            raise serializers.ValidationError('.کد ملی باید عدد باشد')
-        return value
 
     def validate(self, attrs):
         """
