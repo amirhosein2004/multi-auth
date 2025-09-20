@@ -21,7 +21,6 @@ class SendOTPResetPasswordAPIView(APIView):
     """
     authentication_classes = []
     permission_classes = []
-    required_role = []
 
     def post(self, request, *args, **kwargs):
         serializer = SendOTPResetPasswordSerializer(data=request.data)
@@ -53,7 +52,6 @@ class VerifyOTPResetPasswordAPIView(APIView):
     """
     authentication_classes = []
     permission_classes = []
-    required_role = []
 
     def post(self, request, *args, **kwargs):
         serializer = VerifyOTPResetPasswordSerializer(data=request.data)
@@ -76,7 +74,6 @@ class SetNewPasswordAPIView(APIView):
     """
     authentication_classes = []
     permission_classes = []
-    required_role = []
 
     def post(self, request, *args, **kwargs):
         serializer = SetNewPasswordSerializer(data=request.data)
